@@ -176,6 +176,29 @@ hr.section-break { border: none; border-top: 1px solid var(--border-color); marg
 <h2 id="sec-3"><span class="section-num">3</span>Data, Trading Clock, and Point-in-Time Panel</h2>
 <h3>3.1 Data Source and Window</h3>
 <p>The pipeline uses the provided coursework data files under <code>data/</code>: daily adjusted prices, market cap, volume, GICS information, accounting/valuation variables, earnings calendar, short-interest proxies, regime data, and S&amp;P 500 total return benchmark. The development sample runs from 1 January 2010 to 31 December 2024. No 2025 or 2026 observations are used.</p>
+<p>We do not treat the data as one black-box table. The price file defines the tradable clock and all realised returns; the accounting, cheapness, revision, and short-interest files provide slow-moving cross-sectional state variables; the earnings file is used mainly as an information-timing and exclusion control; and the benchmark file is used only for tear-sheet comparison, not for alpha training.</p>
+<table class="data-table small left-align">
+<thead><tr><th>Input Block</th><th>Main Fields Used</th><th>Research Role</th><th>Timing Treatment</th></tr></thead>
+<tbody>
+<tr><td>Daily prices</td><td>Open, high, low, close, adjusted close, volume, market cap, status</td><td>Return decomposition, ADV20, volatility, market-cap universe, execution capacity</td><td>Returns use adjusted auction prices; close/high/low-derived features are shifted one day</td></tr>
+<tr><td>Accounting and valuation panel</td><td>Piotroski, margins, leverage, valuation, revisions, short-interest proxies</td><td>Fundamental, revision, borrow-stress, and industry-state features</td><td>Lagged before ranking; short-interest proxies receive an additional decision lag</td></tr>
+<tr><td>Cheapness scores</td><td>Value, quality, health, momentum, final score and score velocity</td><td>Compact valuation-quality state variables and candidate alpha controls</td><td>Lagged one trading day before use</td></tr>
+<tr><td>Earnings calendar</td><td>Report date, timing flag, strategy trading date</td><td>Prevents event-timing leakage and removes a narrow earnings window</td><td>AMC announcements are shifted forward; BMO announcements are available by the same close</td></tr>
+<tr><td>GICS and benchmark files</td><td>Sector/industry tags and S&amp;P 500 total return index</td><td>Industry controls and QuantStats benchmark context</td><td>Not used to tune future holdout results</td></tr>
+</tbody></table>
+<p>The provided adjusted-price panel is treated as the survivorship-adjusted source. The code loads the full price file up to the development cutoff, freezes the eligible universe from prior-year-end market capitalisation, and does not retroactively filter by 2024 survivors. A selected name remains in the panel until its final available trading date; the universe summary reports these mid-year exits instead of deleting them. Corporate-action consistency is handled by scaling open, high, low, and close with the adjusted-close factor; liquidity uses provided volume and adjusted-close dollar volume.</p>
+<p>The resulting research panel is large but still intentionally liquid-biased. We reconcile <strong>5,469,968</strong> stock-days, while the annual universe audit has <strong>5,470,423</strong> candidate filter stock-days. After price, ADV20, volatility, earnings-window, history and universe filters, <strong>3,194,145</strong> stock-days remain tradable, or <strong>58.39%</strong> of the candidate filter table. Year-start universe size is stable at 986-990 names, while median year-start market cap rises from <strong>$2.46B</strong> in 2010 to a peak of <strong>$14.16B</strong> in 2022. This matters for interpretation: the model is not asked to exploit micro-cap overnight anomalies; it is tested on a large-cap, capacity-aware panel where execution assumptions are at least plausible.</p>
+<table class="data-table small">
+<thead><tr><th>Data Diagnostic</th><th>Value</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>Development window</td><td>2010-01-01 to 2024-12-31</td><td>2025-2026 left untouched for marker evaluation</td></tr>
+<tr><td>Reconciled stock-days</td><td>5,469,968</td><td>Return-identity check is performed before modelling</td></tr>
+<tr><td>Tradable stock-days after filters</td><td>3,194,145 (58.39%)</td><td>Liquidity and event filters materially narrow the panel</td></tr>
+<tr><td>Year-start universe count</td><td>986-990</td><td>Close to the intended top-1000 annual large-cap universe</td></tr>
+<tr><td>Mid-year exits recorded</td><td>0</td><td>Not imposed by us; this is what the supplied panel and audit show after provider handling</td></tr>
+<tr><td>Ranked point-in-time features</td><td>28</td><td>Return/reversal, risk/liquidity, fundamentals, revisions, borrow-stress, industry return</td></tr>
+</tbody></table>
+<p>There are two data caveats worth making explicit. First, we rely on the coursework provider's adjusted-price and membership history as the authoritative survivorship-bias-free source rather than rebuilding delisting payouts from raw CRSP-like events. Our audit checks that we do not add a survivor filter ourselves, but it cannot independently prove every delisting payout. Second, volume is used as a lagged liquidity proxy for ADV20 and participation caps, not as a return component. We therefore treat capacity results as conservative execution diagnostics, not as exact auction-volume reconstruction.</p>
 <p>The trading decision is made before the day-<em>t</em> close. Positions enter at the close and exit at the next open. Features using day-<em>t</em> close, high, low, accounting, or short-interest data are shifted unless they are known before the decision time. Cross-sectional ranks are formed within the same-day available cross-section only.</p>
 
 <h3>3.2 Return Reconciliation</h3>
