@@ -1,0 +1,4 @@
+AUM,raw_short_position_days,tier_b_or_c_short_position_days,fraction_tier_b_or_c,selection_affected_by_borrow_treatment_days,fraction_raw_short_signal_affected_by_borrow_treatment,hard_exclusion_sensitivity_implemented,note
+50000000.0,94035,53406,0.5679374700909235,0,0.0,False,Final strategy uses tiered borrow costs only. Borrow does not alter raw short selection; B/C names are affected in net returns through cost.
+250000000.0,94035,53406,0.5679374700909235,0,0.0,False,Final strategy uses tiered borrow costs only. Borrow does not alter raw short selection; B/C names are affected in net returns through cost.
+1000000000.0,94035,53406,0.5679374700909235,0,0.0,False,Final strategy uses tiered borrow costs only. Borrow does not alter raw short selection; B/C names are affected in net returns through cost.

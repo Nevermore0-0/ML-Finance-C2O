@@ -1,0 +1,2 @@
+tolerance,stock_days_checked,fail_count,fail_fraction,median_abs_residual,p99_abs_residual,max_abs_residual
+1e-08,5469968,0,0.0,0.0,2.220446049250313e-16,4.440892098500626e-16

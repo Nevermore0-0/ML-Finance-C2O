@@ -1,0 +1,29 @@
+feature_name,formula,data_source,required_lag,observable_1550_et_day_t
+rank_r_on_1d,r_overnight = adj_open_t / adj_close_{t-1} - 1,"prices.parquet: adjusted open, adjusted close",0 trading days; Open_t is known after the 09:30 auction,Yes
+rank_r_on_5d,"rolling mean of r_overnight over 5 sessions, min_periods=3","prices.parquet: adjusted open, adjusted close",0 trading days; uses overnight returns available by 15:50 ET,Yes
+rank_r_id_1d,r_intraday_{t-1} = adj_close_{t-1} / adj_open_{t-1} - 1,"prices.parquet: adjusted open, adjusted close",1 trading day,Yes
+rank_ret_cc_5d,adj_close_{t-1} / adj_close_{t-6} - 1,prices.parquet: adjusted close,1 trading day,Yes
+rank_ret_cc_20d,adj_close_{t-1} / adj_close_{t-21} - 1,prices.parquet: adjusted close,1 trading day,Yes
+rank_ret_cc_60d,adj_close_{t-1} / adj_close_{t-61} - 1,prices.parquet: adjusted close,1 trading day,Yes
+rank_vol20,"annualised rolling std of close-to-close returns over 20 sessions, shifted 1 day",prices.parquet: adjusted close,1 trading day,Yes
+rank_vol60,"annualised rolling std of close-to-close returns over 60 sessions, shifted 1 day",prices.parquet: adjusted close,1 trading day,Yes
+rank_amihud20,"rolling mean over 20 sessions of abs(r_close_close) / dollar_volume, shifted 1 day","prices.parquet: adjusted close, volume",1 trading day,Yes
+rank_adv20_log,"log(1 + trailing 20-day average dollar volume), shifted 1 day","prices.parquet: adjusted close, volume",1 trading day,Yes
+rank_market_cap_log,log(1 + market_cap_{t-1}),prices.parquet: market_cap,1 trading day,Yes
+rank_piot_norm_lag1,piot_norm_{t-1},all_data.parquet,1 trading day,Yes
+rank_gross_profit_margin_lag1,gross_profit_margin_{t-1},all_data.parquet,1 trading day,Yes
+rank_asset_turnover_ratio_lag1,asset_turnover_ratio_{t-1},all_data.parquet,1 trading day,Yes
+rank_net_debt_to_equity_lag1,net_debt_to_equity_{t-1},all_data.parquet,1 trading day,Yes
+rank_price_to_book_lag1,price_to_book_{t-1},all_data.parquet,1 trading day,Yes
+rank_ev_to_ebit_lag1,ev_to_ebit_{t-1},all_data.parquet,1 trading day,Yes
+rank_sue_lag1,sue_{t-1},all_data.parquet,1 trading day,Yes
+rank_deps_lag1,deps_{t-1},all_data.parquet,1 trading day,Yes
+rank_reps1_lag1,reps1_{t-1},all_data.parquet,1 trading day,Yes
+rank_repsf4_lag1,repsf4_{t-1},all_data.parquet,1 trading day,Yes
+rank_final_score_lag1,final_score_{t-1},cheapness_scores.parquet,1 trading day,Yes
+rank_score_velocity_lag1,score_velocity_{t-1},cheapness_scores.parquet,1 trading day,Yes
+rank_momentum_score_lag1,momentum_score_{t-1},cheapness_scores.parquet,1 trading day,Yes
+rank_dsi_lag1,dsi_{t-1}; daily short-interest proxy after publication/vendor lag already in source,all_data.parquet,1 trading day after source availability,"Yes, if source obeys Section 2.1.3 lag convention"
+rank_dtcn_lag1,dtcn_{t-1}; daily days-to-cover proxy after publication/vendor lag already in source,all_data.parquet,1 trading day after source availability,"Yes, if source obeys Section 2.1.3 lag convention"
+rank_ddtcn_lag1,ddtcn_{t-1}; lagged change/stress proxy after publication/vendor lag already in source,all_data.parquet,1 trading day after source availability,"Yes, if source obeys Section 2.1.3 lag convention"
+rank_industry_return_lag1,industry_return_{t-1},all_data.parquet,1 trading day,Yes

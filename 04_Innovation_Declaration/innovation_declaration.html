@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovation Declaration</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1in;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 10.5pt;
+            line-height: 1.55;
+            color: #1a1a1a;
+            margin: 1in;
+        }
+
+        h1 {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 24pt;
+            font-weight: bold;
+            color: #002147;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .opening {
+            margin-bottom: 18px;
+        }
+
+        h2 {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 13pt;
+            font-weight: bold;
+            color: #002147;
+            margin-top: 16px;
+            margin-bottom: 6px;
+        }
+
+        p {
+            margin-bottom: 10px;
+            text-align: justify;
+        }
+
+        .footer {
+            margin-top: 22px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+            font-size: 9.5pt;
+            color: #444;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Innovation Declaration</h1>
+
+    <p class="opening">We used LLM tools during this project — mostly for drafting boilerplate code, cleaning up notebooks, and catching edge cases we might have missed. That said, the strategic decisions were ours. Below are three places where we think our judgement mattered more than the tool.</p>
+
+    <h2>1. We reported the stylised fact honestly</h2>
+    <p>The textbook version of the overnight premium says overnight returns should dominate close-to-close returns. Our data didn't fully support that: the equal-weight close-to-close stream was actually larger than the overnight stream, partly because intraday returns were consistently positive. We could have picked a subset or reweighted things to make the chart look more like the textbook. We didn't. We showed the actual decomposition, noted where it diverges from the standard narrative, and built the rest of the report on what the data actually says. We think that honesty is worth more than a cleaner-looking figure.</p>
+
+    <h2>2. We redesigned the training target</h2>
+    <p>The baseline model trained on raw overnight returns. The problem is that high-volatility names dominate the loss function — a 50bp move in a biotech stock gets the same treatment as a 50bp move in a utility, even though the latter is far more unusual. We replaced the target with a volatility-scaled version: overnight_next / (vol20 / sqrt(252)). This reframes the prediction task as "which stocks will have unusually good risk-adjusted overnight returns?" rather than "which stocks will move the most." The expanding-window learner then used more historical evidence over time without adding model complexity. This was a modelling choice based on financial intuition, not something the LLM suggested.</p>
+
+    <h2>3. We didn't cherry-pick the best-looking result</h2>
+    <p>Our model-family robustness screen showed that LightGBM and HistGradientBoosting both produced much higher Sharpe ratios than the submitted linear model. A purely metric-driven approach would have swapped in one of those. We kept the linear model because: (a) we hadn't done a full audit of the nonlinear models — no leakage checks, no turnover analysis, no hyperparameter stability tests; and (b) the coursework marker evaluates 2025-2026 as held-out data, so overfitting to in-sample performance is a real risk. We also kept the ablation results showing that removing short-interest and earnings features actually improves Sharpe, rather than hiding that finding. The strategy is presented with its failure modes visible, not airbrushed.</p>
+
+    <p class="footer">Final strategy: phase2_g5_05_expanding, 250M net Sharpe 1.445 over 2010–2024. 2025–2026 is untouched and left for marker evaluation.</p>
+
+</body>
+</html>
